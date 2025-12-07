@@ -5,26 +5,31 @@ import jakarta.persistence.*;
 import java.awt.*;
 import java.util.Date;
 
-@Table(name = "usuario")
+@Table(name = "usuario",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"nom_user"}),
+        @UniqueConstraint(columnNames = {"coreo"}),
+        @UniqueConstraint(columnNames = {"telefono"})
+    })
 @Entity(name = "Usuario")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
     private Integer idUsuario;
-    @Column(name = "nom_user")
+    @Column(name = "nom_user", nullable = false)
     private String nomUser;
-    @Column(name = "nombre_usuario")
+    @Column(name = "nombre_usuario", nullable = false)
     private String nombreUsuario;
-    @Column(name = "apellido_usuario")
+    @Column(name = "apellido_usuario", nullable = false)
     private String apellidoUsuario;
-    @Column(name = "clave")
+    @Column(name = "clave", nullable = false)
     private String clave;
     @Column(name = "edad")
     private int edad;
-    @Column(name = "correo")
+    @Column(name = "correo", nullable = false)
     private String correo;
-    @Column(name = "telefono")
+    @Column(name = "telefono", nullable = false)
     private String telefono;
     @Column(name = "activo", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean activo = true;
