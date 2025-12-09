@@ -1,6 +1,7 @@
 package org.desarrollo.controller;
 
 
+import org.desarrollo.dto.FiscalListaDTO;
 import org.desarrollo.dto.FiscalRequestDTO;
 import org.desarrollo.dto.FiscalResponseDTO;
 import org.desarrollo.mapper.FiscalMapper;
@@ -26,13 +27,22 @@ public class FiscalController {
 
 
     @GetMapping
-    public ResponseEntity<List<FiscalResponseDTO>> listarFiscales() {
-        return ResponseEntity.ok(servicio.listarTodosFiscales());
+    public ResponseEntity<List<FiscalListaDTO>> listarFiscales() {
+        return ResponseEntity.ok(servicio.listarFiscalesActivosOptimizado());
     }
 
-    @GetMapping("/fiscales-activos/")
-    public ResponseEntity<List<FiscalResponseDTO>> buscarFiscalesporEstado() {
-        return ResponseEntity.ok(servicio.buscarActivos(true));
+    @GetMapping("/busqueda_optimizada/")
+    public ResponseEntity<List<FiscalListaDTO>> busquedaOptimizada(@RequestParam(required = false) Integer idTipoFiscal,
+                                                                   @RequestParam(required = false) Integer idJornada,
+                                                                   @RequestParam(required = false) Boolean activo,
+                                                                   @RequestParam(required = false) String apellido) {
+        if (apellido == null ||apellido.isBlank()) {
+            apellido = "";
+        } else {
+            apellido = apellido.toUpperCase(Locale.ROOT);
+        }
+        List<FiscalListaDTO> resultado = servicio.buscarTodosOptimizado(idTipoFiscal, idJornada, activo, apellido);
+        return ResponseEntity.ok(resultado);
     }
 
 
@@ -40,6 +50,11 @@ public class FiscalController {
     public ResponseEntity<FiscalResponseDTO> buscarFiscalPorId(@PathVariable Integer id) {
         FiscalResponseDTO dto = servicio.buscoPorId(id);
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/apellidos")
+    public ResponseEntity<List<String>> listarTodosPorApellido() {
+        return ResponseEntity.ok(servicio.buscarTodosPorApellidos());
     }
 
     @GetMapping("/buscar/{apellido}")
@@ -94,7 +109,7 @@ public class FiscalController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/opciones-buscar")
+    /*@GetMapping("/opciones-buscar")
     public ResponseEntity<List<FiscalResponseDTO>> busquedasPorFiltros(@RequestParam(required = false) Integer idTipoFiscal,
                                                             @RequestParam(required = false) Integer idJornada,
                                                             @RequestParam(required = false) Boolean activo,
@@ -106,7 +121,7 @@ public class FiscalController {
         }
         List<FiscalResponseDTO> resultado = servicio.busquedaParaFiltros(idTipoFiscal, idJornada, activo, apellido);
         return ResponseEntity.ok(resultado);
-    }
+    }*/
 
     @PostMapping
     public ResponseEntity<FiscalResponseDTO> guardarFiscal(@RequestBody FiscalRequestDTO dto) {

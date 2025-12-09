@@ -1,6 +1,7 @@
 package org.desarrollo.mapper;
 
 import jakarta.persistence.EntityManager;
+import org.desarrollo.dto.FiscalListaDTO;
 import org.desarrollo.dto.FiscalRequestDTO;
 import org.desarrollo.dto.FiscalResponseDTO;
 import org.desarrollo.model.*;
@@ -69,6 +70,27 @@ public class FiscalMapper {
                 fiscal.getJornada().getIdJornada() != null ? fiscal.getJornada().getIdJornada() : null,
                 fiscal.getMesa() != null ? fiscal.getMesa().getIdMesa() : null
 
+        );
+    }
+
+    public static FiscalListaDTO deEntidadAFiscalListaDTO(Fiscal f){
+        return new FiscalListaDTO(
+                f.getIdFiscal(),
+                f.getNombreFiscal(),
+                f.getApellidoFiscal(),
+                f.getEdadFiscal(),
+                f.getCorreoFiscal(),
+                f.getTelefono(),
+                f.getTipoFiscal().getNombre(),
+                f.getJornada().getTipoJornada(),
+                f.getEstablecimientoVoto().getNombreEstablecimiento(),
+                f.getEstablecimientoAsignado().getNombreEstablecimiento(),
+                f.getDireccion().getCalle().getNombre(),
+                f.getDireccion().getAltura(),
+                f.getDireccion().getTipoPiso().getNombre(),
+                f.getDireccion().getTipoDepartamento().getNombre(),
+                f.getMesa().getNumeroMesa(),
+                f.isActivo()
         );
     }
 

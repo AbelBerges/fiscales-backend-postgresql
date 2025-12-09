@@ -22,7 +22,6 @@ public class Fiscal {
     private String correoFiscal;
     @Column(name = "telefono", nullable = false, unique = true)
     private String telefono;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tipo_fiscal", referencedColumnName = "id_tipo_fiscal", nullable = false)
     private TipoFiscal tipoFiscal;

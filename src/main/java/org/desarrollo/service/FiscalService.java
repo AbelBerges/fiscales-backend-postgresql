@@ -3,6 +3,7 @@ package org.desarrollo.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.desarrollo.dto.FiscalListaDTO;
 import org.desarrollo.dto.FiscalRequestDTO;
 import org.desarrollo.dto.FiscalResponseDTO;
 import org.desarrollo.mapper.FiscalMapper;
@@ -33,10 +34,9 @@ public class FiscalService {
     @Autowired
     private MesaRepository mesaRepo;
 
-    public List<FiscalResponseDTO> listarTodosFiscales() {
-        return repo.findAll().stream()
-                .map(FiscalMapper::aEntidadResponseDTO)
-                .toList();
+
+    public List<FiscalListaDTO> listarFiscalesActivosOptimizado() {
+        return repo.todosOptimizado();
     }
 
     public List<FiscalResponseDTO> listarPorTipoFiscal(Integer id) {
@@ -112,14 +112,17 @@ public class FiscalService {
                 .map(FiscalMapper::aEntidadResponseDTO);
     }
 
-    public List<FiscalResponseDTO> busquedaParaFiltros(Integer idTipoFiscal, Integer idJornada, Boolean activo, String apellido) {
+    /*public List<FiscalResponseDTO> busquedaParaFiltros(Integer idTipoFiscal, Integer idJornada, Boolean activo, String apellido) {
         return repo.buscarConFiltros(idTipoFiscal, idJornada, activo, apellido).stream()
                 .map(FiscalMapper::aEntidadResponseDTO).toList();
+    }*/
+
+    public List<FiscalListaDTO> buscarTodosOptimizado(Integer idTipoFiscal, Integer idJornada, Boolean activo, String apellido) {
+        return repo.buscarOptimizado(idTipoFiscal, idJornada, activo, apellido).stream().toList();
     }
 
-    public List<FiscalResponseDTO> buscarActivos(Boolean estado) {
-        return repo.findByActivo(estado).stream()
-                .map(FiscalMapper::aEntidadResponseDTO).toList();
+    public List<String> buscarTodosPorApellidos() {
+        return repo.apellidos();
     }
 
     @Transactional
