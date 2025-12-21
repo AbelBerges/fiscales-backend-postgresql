@@ -1,7 +1,9 @@
 package org.desarrollo.controller;
 
+import org.desarrollo.dto.CalleMinimaDTO;
 import org.desarrollo.dto.CalleRequestDTO;
 import org.desarrollo.dto.CalleResponseDTO;
+import org.desarrollo.model.Calle;
 import org.desarrollo.repository.CalleRepository;
 import org.desarrollo.service.CalleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +38,24 @@ public class CalleController {
     }
 
     @GetMapping("/buscar/{nombre}")
-    public ResponseEntity<List<CalleResponseDTO>> buscarPorNombre(@PathVariable String nombre) {
+    public ResponseEntity<List<String>> buscarPorNombre(@PathVariable String nombre) {
         return ResponseEntity.ok(servicio.listarPorNombreCalle(nombre));
+    }
+
+    //Este vamos a borrar
+    @GetMapping("/calle-por-nombre/{nombre}")
+    public ResponseEntity<Calle> buscarUnaCallePorNombre(@RequestParam("nombre ") String nombre) {
+        return ResponseEntity.ok(servicio.buscoPorElNombre(nombre));
+    }
+
+    @GetMapping("/para-guardado")
+    public ResponseEntity<List<CalleMinimaDTO>> buscarParaGuardadoDesdeBusquedas() {
+        return ResponseEntity.ok(servicio.paraAutocompletar());
+    }
+
+    @GetMapping("/todas-por-nombre")
+    public ResponseEntity<List<String>> listarTodasCallesPorSuNombre() {
+        return ResponseEntity.ok(servicio.listarTodasLasCallesNombre());
     }
 
     @PostMapping

@@ -45,6 +45,11 @@ public class FiscalController {
         return ResponseEntity.ok(resultado);
     }
 
+    @GetMapping("/fiscales-por-establecimiento/{id}")
+    public ResponseEntity<List<FiscalListaDTO>> listarFiscalesPorEstablecimiento(@PathVariable Integer id) {
+        List<FiscalListaDTO> lista = servicio.recuperarFiscalesPorEstablecimiento(id);
+        return ResponseEntity.ok(lista);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<FiscalResponseDTO> buscarFiscalPorId(@PathVariable Integer id) {

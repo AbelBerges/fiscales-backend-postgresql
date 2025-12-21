@@ -112,10 +112,9 @@ public class FiscalService {
                 .map(FiscalMapper::aEntidadResponseDTO);
     }
 
-    /*public List<FiscalResponseDTO> busquedaParaFiltros(Integer idTipoFiscal, Integer idJornada, Boolean activo, String apellido) {
-        return repo.buscarConFiltros(idTipoFiscal, idJornada, activo, apellido).stream()
-                .map(FiscalMapper::aEntidadResponseDTO).toList();
-    }*/
+    public List<FiscalListaDTO> recuperarFiscalesPorEstablecimiento(Integer idEst) {
+        return repo.listarFiscalesPorEstablecimiento(idEst);
+    }
 
     public List<FiscalListaDTO> buscarTodosOptimizado(Integer idTipoFiscal, Integer idJornada, Boolean activo, String apellido) {
         return repo.buscarOptimizado(idTipoFiscal, idJornada, activo, apellido).stream().toList();
@@ -143,7 +142,6 @@ public class FiscalService {
 
     @Transactional
     public void actualizarFiscal(Integer id, FiscalRequestDTO dto) {
-        System.out.println("quiero ver el dto " + dto);
         Fiscal existe = repo.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontró el fical"));
 
         //Si se quiere asignar una nueva mesa, validar disponibilidad

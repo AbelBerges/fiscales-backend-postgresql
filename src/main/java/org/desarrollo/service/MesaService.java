@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.desarrollo.dto.AsignacionMesasRequestDTO;
+import org.desarrollo.dto.MesaEstadoDTO;
 import org.desarrollo.dto.MesaRequestDTO;
 import org.desarrollo.dto.MesaResponseDTO;
 import org.desarrollo.mapper.MesaMapper;
@@ -48,6 +49,11 @@ public class MesaService {
         }
         return MesaMapper.aResponseDTO(encontrada.get());
 
+    }
+
+    public List<MesaEstadoDTO> calcularEstado(Integer idEst) {
+        List<Object[]> crudo = repoMesa.estadoCrudoMesas(idEst);
+        return MesaMapper.aMesaDesdeObjetc(crudo);
     }
 
     @Transactional

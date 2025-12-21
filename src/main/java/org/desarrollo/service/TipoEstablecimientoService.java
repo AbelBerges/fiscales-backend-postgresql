@@ -1,6 +1,7 @@
 package org.desarrollo.service;
 
 import jakarta.persistence.EntityManager;
+import org.desarrollo.dto.TipoEstablecimientoMinimoDTO;
 import org.desarrollo.dto.TipoEstablecimientoRequestDTO;
 import org.desarrollo.dto.TipoEstablecimientoResponseDTO;
 import org.desarrollo.mapper.TipoEstablecimientoMapper;
@@ -38,6 +39,10 @@ public class TipoEstablecimientoService {
                 .map(TipoEstablecimientoMapper::aEntidadResponseDTO)
                 .toList();
         return lista;
+    }
+
+    public List<TipoEstablecimientoMinimoDTO> busquedaOptimizada() {
+        return repo.tiposOptimizado();
     }
 
     public TipoEstablecimientoResponseDTO guardarTipoEst(TipoEstablecimientoRequestDTO dto) {

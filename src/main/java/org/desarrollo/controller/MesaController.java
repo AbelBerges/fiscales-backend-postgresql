@@ -3,17 +3,20 @@ package org.desarrollo.controller;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.desarrollo.dto.AsignacionMesasRequestDTO;
+import org.desarrollo.dto.MesaEstadoDTO;
 import org.desarrollo.dto.MesaRequestDTO;
 import org.desarrollo.dto.MesaResponseDTO;
 import org.desarrollo.model.ErrorResponse;
 import org.desarrollo.service.MesaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/mesas")
@@ -42,6 +45,11 @@ public class MesaController {
     @PostMapping
     public ResponseEntity<MesaResponseDTO> guardarMesa(@RequestBody MesaRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(servicio.guardarMesa(dto));
+    }
+
+    @GetMapping("/calcular-estado-completo-incompleto/{idEst}")
+    public ResponseEntity<List<MesaEstadoDTO>> estadoMesas(@PathVariable Integer idEst) {
+        return ResponseEntity.ok(servicio.calcularEstado(idEst));
     }
 
     @PutMapping("/{id}")

@@ -2,10 +2,9 @@ package org.desarrollo.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import org.desarrollo.dto.EstablecimientoMesasDTO;
-import org.desarrollo.dto.EstablecimientoRequestDTO;
-import org.desarrollo.dto.EstablecimientoResponseDTO;
+import org.desarrollo.dto.*;
 import org.desarrollo.mapper.EstablecimientoMapper;
+import org.desarrollo.mapper.MesaMapper;
 import org.desarrollo.model.Establecimiento;
 import org.desarrollo.model.Mesa;
 import org.desarrollo.repository.EstablecimientoRepository;
@@ -27,10 +26,8 @@ public class EstablecimientoService {
     private MesaRepository mesaRepo;
 
 
-    public List<EstablecimientoResponseDTO> listarTodos() {
-        return repo.findAll().stream()
-                .map(EstablecimientoMapper::aEntidadEstablecimientoResponseDTO)
-                .toList();
+    public List<EstablecimientoListaDTO> listarTodos() {
+        return repo.buscarEstablecimientoOptimizado();
     }
 
     public EstablecimientoResponseDTO buscarPorId(Integer id) {
@@ -39,16 +36,47 @@ public class EstablecimientoService {
                 .orElse(null);
     }
 
+    public EstablecimientoListaDTO buscarUnoPorId(Integer id) {
+        return repo.unoOptimizado(id);
+    }
+
+    public String BuscarTipoEstablecimientoPorId(Integer idEstablecimiento) {
+        return repo.obtenerTipoEstablecimientoPorIdEstablecimiento(idEstablecimiento);
+    }
+
+    public String recuperoEstadoEstablecimiento(Integer idEst) {
+        return repo.estadoEstablecimiento(idEst);
+    }
+
     public List<EstablecimientoResponseDTO> listaPornombre(String nombre) {
         return repo.findByNombreEstablecimientoContainingIgnoreCase(nombre).stream()
                 .map(EstablecimientoMapper::aEntidadEstablecimientoResponseDTO).toList();
     }
 
+    public EstablecimientoDetalleEstadoDTO listadoDelEstadoEstablecimientos(Integer idEst) {
+        //Buscamos el estado del establecimiento
+        String estadoEst = recuperoEstadoEstablecimiento(idEst);
+        //Buscamos el estadod de las mesas Objetc[]
+        List<Object[]> crudoMesas = mesaRepo.estadoCrudoMesas(idEst);
+        //Mapeamos las mesas
+        List<MesaEstadoDTO> mesas = MesaMapper.aMesaDesdeObjetc(crudoMesas);
+        return new EstablecimientoDetalleEstadoDTO(
+                idEst,
+                estadoEst,
+                mesas
+        );
+    }
+
+    public List<EstablecimientoEstadoDTO> listarEstadosParaCombo() {
+        List<Object[]> estados = repo.estadoEstablecimientos();
+        return EstablecimientoMapper.mapearDesdeListaObjet(estados);
+    }
+
     @Transactional
-    public EstablecimientoResponseDTO guardar(EstablecimientoRequestDTO dto) {
+    public EstablecimientoListaDTO guardar(EstablecimientoRequestDTO dto) {
         Establecimiento nuevo = EstablecimientoMapper.aEntidadCreacion(dto, em);
         Establecimiento guardado = repo.save(nuevo);
-        return EstablecimientoMapper.aEntidadEstablecimientoResponseDTO(guardado);
+        return EstablecimientoMapper.desdeEstablecimientoAListaDTO(guardado);
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package org.desarrollo.controller;
 
+import org.desarrollo.dto.TipoEstablecimientoMinimoDTO;
 import org.desarrollo.dto.TipoEstablecimientoRequestDTO;
 import org.desarrollo.dto.TipoEstablecimientoResponseDTO;
 import org.desarrollo.mapper.TipoEstablecimientoMapper;
@@ -28,6 +29,10 @@ public class TipoEstablecimientoController {
         this.repo = repo;
     }
 
+    @GetMapping("/busqueda-optimizada")
+    public ResponseEntity<List<TipoEstablecimientoMinimoDTO>> todosOptimizados() {
+        return ResponseEntity.ok(service.busquedaOptimizada());
+    }
 
     @GetMapping
     public ResponseEntity<List<TipoEstablecimientoResponseDTO>> listarTiposEstablecimientos() {

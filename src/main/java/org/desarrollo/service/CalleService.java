@@ -1,6 +1,7 @@
 package org.desarrollo.service;
 
 import jakarta.persistence.EntityManager;
+import org.desarrollo.dto.CalleMinimaDTO;
 import org.desarrollo.dto.CalleRequestDTO;
 import org.desarrollo.dto.CalleResponseDTO;
 import org.desarrollo.mapper.CalleMapper;
@@ -21,10 +22,17 @@ public class CalleService {
 
 
     public List<CalleResponseDTO> listarTodasLasCalles() {
-        List<CalleResponseDTO> laLista = repo.findAll().stream()
+        return repo.findAll().stream()
                 .map(CalleMapper::aResponseDTo)
                 .toList();
-        return laLista;
+    }
+
+    public List<String> listarTodasLasCallesNombre() {
+        return repo.buscarCallesPorSuNombre();
+    }
+
+    public List<CalleMinimaDTO> paraAutocompletar() {
+        return repo.todasLasCallesMinimaDTO();
     }
 
     public CalleResponseDTO buscoPorId(Integer idCalle) {
@@ -33,10 +41,13 @@ public class CalleService {
                 .orElse(null);
     }
 
-    public List<CalleResponseDTO> listarPorNombreCalle(String nombre) {
-        List<CalleResponseDTO> listado = repo.findByNombreContainingIgnoreCase(nombre)
+    public Calle buscoPorElNombre(String nombre) {
+        return repo.findByNombreContainingIgnoreCase(nombre);
+    }
+
+    public List<String> listarPorNombreCalle(String nombre) {
+        List<String> listado = repo.buscarPorNombre(nombre)
                 .stream()
-                .map(CalleMapper::aResponseDTo)
                 .toList();
         return listado;
     }

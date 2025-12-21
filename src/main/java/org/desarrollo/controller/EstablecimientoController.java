@@ -1,9 +1,7 @@
 package org.desarrollo.controller;
 
 
-import org.desarrollo.dto.EstablecimientoMesasDTO;
-import org.desarrollo.dto.EstablecimientoRequestDTO;
-import org.desarrollo.dto.EstablecimientoResponseDTO;
+import org.desarrollo.dto.*;
 import org.desarrollo.model.*;
 import org.desarrollo.service.EstablecimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,7 @@ public class EstablecimientoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EstablecimientoResponseDTO>> listarEstablecimentos() {
+    public ResponseEntity<List<EstablecimientoListaDTO>> listarEstablecimentos() {
         return ResponseEntity.ok(servicio.listarTodos());
     }
 
@@ -37,11 +35,43 @@ public class EstablecimientoController {
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/lista/{id}")
+    public ResponseEntity<EstablecimientoListaDTO> buscarUnoOptimizado(@PathVariable Integer id) {
+        return ResponseEntity.ok(servicio.buscarUnoPorId(id));
+    }
+
     @GetMapping("/buscar/{nombre}")
     public ResponseEntity<List<EstablecimientoResponseDTO>> buscarPorNombre(@PathVariable String nombre) {
         List<EstablecimientoResponseDTO> laLista = servicio.listaPornombre(nombre);
         return laLista != null ? ResponseEntity.ok(laLista) : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{idEst}/mesas/estado")
+    public ResponseEntity<String> estadoEstablecimiento(@PathVariable Integer idEst) {
+        return ResponseEntity.ok(servicio.recuperoEstadoEstablecimiento(idEst));
+    }
+
+    @GetMapping("/busco-tipo-estableciento-porid/{idEstablecimiento}")
+    public ResponseEntity<String> recuperoTipoEstablecimientoPorIdEstablecimiento(@PathVariable Integer idEstablecimiento) {
+        return ResponseEntity.ok(servicio.BuscarTipoEstablecimientoPorId(idEstablecimiento));
+    }
+
+    @GetMapping("/estado/{idEst}")
+    public ResponseEntity<EstablecimientoDetalleEstadoDTO> recuperarLosEstadosEstablecimientos(@PathVariable Integer idEst) {
+        return ResponseEntity.ok(servicio.listadoDelEstadoEstablecimientos(idEst));
+    }
+
+    @GetMapping("/evaluar-estados")
+    public ResponseEntity<List<EstablecimientoEstadoDTO>> contenidoParaComboBox() {
+        return ResponseEntity.ok(servicio.listarEstadosParaCombo());
+    }
+
+    // ============================== ATENCIÓN PREGUNTAR POR ESTO ===============================
+    /*
+    @Cacheable("estadoEstablecimientos")
+    public List<EstablecimientoEstadoListaDTO> listarEstados() { ... }
+     */
+
 
     @GetMapping("/buscar-establecimiento-sin-mesas")
     public ResponseEntity<List<EstablecimientoResponseDTO>> buscoEstablecimientosSinMesas() {
@@ -55,7 +85,7 @@ public class EstablecimientoController {
 
 
     @PostMapping
-    public ResponseEntity<EstablecimientoResponseDTO> guardarEstablecimiento(@RequestBody EstablecimientoRequestDTO dto) {
+    public ResponseEntity<EstablecimientoListaDTO> guardarEstablecimiento(@RequestBody EstablecimientoRequestDTO dto) {
         return ResponseEntity.ok(servicio.guardar(dto));
     }
 

@@ -26,6 +26,39 @@ public interface FiscalRepository extends JpaRepository<Fiscal, Integer> {
     @Query("SELECT f.apellidoFiscal FROM Fiscal f")
     List<String> apellidos();
     @Query("""
+        SELECT new org.desarrollo.dto.FiscalListaDTO(
+        f.idFiscal,
+        f.nombreFiscal,
+        f.apellidoFiscal,
+        f.edadFiscal,
+        f.correoFiscal,
+        f.telefono,
+        tf.nombre,
+        j.tipoJornada,
+        ev.nombreEstablecimiento,
+        ea.nombreEstablecimiento,
+        c.nombre,
+        d.altura,
+        p.nombre,
+        dep.nombre,
+        m.numeroMesa,
+        f.activo
+        )
+        FROM Fiscal f JOIN f.tipoFiscal tf
+            LEFT JOIN f.jornada j
+            LEFT JOIN f.establecimientoVoto ev
+            LEFT JOIN f.establecimientoAsignado ea
+            JOIN f.direccion d
+            LEFT JOIN d.calle c
+            LEFT JOIN d.tipoPiso p
+            LEFT JOIN d.tipoDepartamento dep
+            JOIN f.mesa m
+            JOIN m.establecimiento e
+        WHERE e.idEstablecimiento = :idEst
+        ORDER BY f.apellidoFiscal ASC
+""")
+    List<FiscalListaDTO> listarFiscalesPorEstablecimiento(@Param("idEst") Integer idEst);
+    @Query("""
             SELECT new org.desarrollo.dto.FiscalListaDTO(
             f.idFiscal,
             f.nombreFiscal,
@@ -94,14 +127,5 @@ public interface FiscalRepository extends JpaRepository<Fiscal, Integer> {
                                           @Param("idJornada") Integer idJornada,
                                           @Param("activo") Boolean activo,
                                           @Param("apellido") String apellido);
-    /*@Query("""
-            SELECT f FROM Fiscal f WHERE (:idTipoFiscal IS NULL OR f.tipoFiscal.id = :idTipoFiscal)
-            AND (:idJornada IS NULL OR f.jornada.id = :idJornada)
-            AND (:activo IS NULL OR f.activo = :activo)
-            AND (:apellido = '' OR f.apellidoFiscal LIKE CONCAT('%', :apellido, '%'))
-            """)
-    List<Fiscal> buscarConFiltros(@Param("idTipoFiscal") Integer idTipoFiscal,
-                                  @Param("idJornada") Integer idJornada,
-                                  @Param("activo") Boolean activo,
-                                  @Param("apellido") String apellido);*/
+
 }

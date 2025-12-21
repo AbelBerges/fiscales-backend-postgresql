@@ -1,10 +1,10 @@
 package org.desarrollo.mapper;
 
 import jakarta.persistence.EntityManager;
-import org.desarrollo.dto.EstablecimientoRequestDTO;
-import org.desarrollo.dto.EstablecimientoResponseDTO;
+import org.desarrollo.dto.*;
 import org.desarrollo.model.*;
 
+import java.util.List;
 import java.util.Objects;
 
 public class EstablecimientoMapper {
@@ -34,6 +34,41 @@ public class EstablecimientoMapper {
         return est;
     }
 
+    public static List<EstablecimientoEstadoDTO> mapearDesdeListaObjet(List<Object[]> listado) {
+        List<EstablecimientoEstadoDTO> lista = listado.stream()
+                .map(f -> new EstablecimientoEstadoDTO(
+                        ((Number) f[0]).intValue(),
+                        (String) f[1],
+                        (String) f[2]
+                ))
+                .toList();
+        return lista;
+    }
+
+    public static EstablecimientoListaDTO desdeEstablecimientoAListaDTO(Establecimiento est) {
+        Long cantidad = null;
+        if (est.getMesas().isEmpty()) {
+            cantidad = (long) est.getMesas().size();
+        }
+        String piso = est.getDireccion() != null && est.getDireccion().getTipoPiso() != null
+                ? est.getDireccion().getTipoPiso().getNombre()
+                : null;
+        String departamento = est.getDireccion() != null && est.getDireccion().getTipoDepartamento() != null
+                ? est.getDireccion().getTipoDepartamento().getNombre()
+                : null;
+        return new EstablecimientoListaDTO(
+                est.getIdEstablecimiento(),
+                est.getNombreEstablecimiento(),
+                est.getDescripcion(),
+                cantidad,
+                est.getDireccion().getCalle().getNombre(),
+                est.getDireccion().getAltura(),
+                piso,
+                departamento,
+                est.getTipoEstablecimiento().getTipo(),
+                est.isActivo()
+        );
+    }
 
     public static EstablecimientoResponseDTO aEntidadEstablecimientoResponseDTO(Establecimiento establecimiento) {
         return new EstablecimientoResponseDTO(
