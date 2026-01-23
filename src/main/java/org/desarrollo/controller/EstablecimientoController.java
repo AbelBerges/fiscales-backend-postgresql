@@ -25,7 +25,7 @@ public class EstablecimientoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EstablecimientoListaDTO>> listarEstablecimentos() {
+    public ResponseEntity<List<EstablecimientoListaDTO>> listarEstablecimientos() {
         return ResponseEntity.ok(servicio.listarTodos());
     }
 
@@ -79,7 +79,7 @@ public class EstablecimientoController {
     }
 
     @GetMapping("/buscar-establecimiento-con-mesas")
-    public ResponseEntity<List<EstablecimientoResponseDTO>> buscoEstablecimientosConMesas() {
+    public ResponseEntity<List<EstablecimientosConMesasDTO>> buscoEstablecimientosConMesas() {
         return ResponseEntity.ok(servicio.listaEstablecimientoConMesas());
     }
 
@@ -89,10 +89,21 @@ public class EstablecimientoController {
         return ResponseEntity.ok(servicio.guardar(dto));
     }
 
+    @PostMapping("/admin/{idBasica}")
+    public ResponseEntity<EstablecimientoListaDTO> guardarComoAdmin(@PathVariable Integer idBasica, @RequestBody EstablecimientoRequestDTO dto) {
+        return ResponseEntity.ok(servicio.guardarComoAdmin(dto, idBasica));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> actualizarEstablecimiento(@PathVariable Integer id, @RequestBody EstablecimientoRequestDTO dto) {
         boolean ok = servicio.actualizo(id, dto);
         return ok ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}/cambiar-basica/{idBasica}")
+    public ResponseEntity<Void> cambiarBasica(@PathVariable Integer id, @PathVariable Integer idBasica) {
+        servicio.cambiarBasica(id, idBasica);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/desactivar/{id}")
@@ -101,8 +112,8 @@ public class EstablecimientoController {
         return ok ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
     }
     @GetMapping("/mesas-resumen/{id}")
-    public ResponseEntity<EstablecimientoMesasDTO> resumenMesa(@PathVariable Integer id) {
-        EstablecimientoMesasDTO objeto = servicio.mesasResumen(id);
+    public ResponseEntity<EstablecimientosConMesasDTO> resumenMesa(@PathVariable Integer id) {
+        EstablecimientosConMesasDTO objeto = servicio.mesasResumen(id);
         return ResponseEntity.ok(objeto);
     }
 

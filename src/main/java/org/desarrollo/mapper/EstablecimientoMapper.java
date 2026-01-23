@@ -66,7 +66,9 @@ public class EstablecimientoMapper {
                 piso,
                 departamento,
                 est.getTipoEstablecimiento().getTipo(),
-                est.isActivo()
+                est.isActivo(),
+                est.getBasica().getIdBasica(),
+                est.getBasica().getNombre()
         );
     }
 

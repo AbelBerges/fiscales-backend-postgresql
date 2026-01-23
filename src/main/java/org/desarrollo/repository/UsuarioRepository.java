@@ -10,4 +10,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByNomUser(String nomUser);
     List<Usuario> findByApellidoUsuarioContainingIgnoreCase(String apellidoUsuario);
     List<Usuario> findByNomUserContainingIgnoreCase(String nomUser);
+    List<Usuario> findByBasica_IdBasica(Integer idBasica);
+    List<Usuario> findByActivoTrueOrderByApellidoUsuarioAsc();
 }

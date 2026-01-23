@@ -1,5 +1,6 @@
 package org.desarrollo.dto;
 
+
 import java.util.Date;
 
 public record UsuarioResquestDTO(
@@ -10,6 +11,8 @@ public record UsuarioResquestDTO(
         Integer edad,
         String correo,
         String telefono,
-        Boolean activo
+        Boolean activo,
+        String rol,
+        Integer idBasica
 ) {
 }

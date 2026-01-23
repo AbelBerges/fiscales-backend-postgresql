@@ -27,6 +27,9 @@ public class Establecimiento {
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "id_tipo_establecimiento", referencedColumnName = "id_tipo_establecimiento")
     private TipoEstablecimiento tipoEstablecimiento;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_basica",referencedColumnName = "id_basica", nullable = false)
+    private Basica basica;
     @Column(name = "activo", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean activo = true;
 
@@ -115,4 +118,11 @@ public class Establecimiento {
         this.activo = activo;
     }
 
+    public Basica getBasica() {
+        return basica;
+    }
+
+    public void setBasica(Basica basica) {
+        this.basica = basica;
+    }
 }

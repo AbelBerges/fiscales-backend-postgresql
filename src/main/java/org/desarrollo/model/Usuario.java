@@ -1,6 +1,7 @@
 package org.desarrollo.model;
 
 import jakarta.persistence.*;
+import org.desarrollo.enumeradores.Rol;
 
 import java.awt.*;
 import java.util.Date;
@@ -35,6 +36,12 @@ public class Usuario {
     private boolean activo = true;
     @Column(name = "fecha_acceso")
     private Date fechaAcceso;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol", nullable = false)
+    private Rol rol;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_basica")
+    private Basica basica;
 
     public Usuario() {}
 
@@ -146,5 +153,19 @@ public class Usuario {
         this.fechaAcceso = fechaAcceso;
     }
 
+    public Rol getRol() {
+        return rol;
+    }
 
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    public Basica getBasica() {
+        return basica;
+    }
+
+    public void setBasica(Basica basica) {
+        this.basica = basica;
+    }
 }

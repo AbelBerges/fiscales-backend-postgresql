@@ -90,7 +90,9 @@ public class FiscalMapper {
                 f.getDireccion().getTipoPiso().getNombre(),
                 f.getDireccion().getTipoDepartamento().getNombre(),
                 f.getMesa().getNumeroMesa(),
-                f.isActivo()
+                f.isActivo(),
+                f.getBasica().getIdBasica(),
+                f.getBasica().getNombre()
         );
     }
 
@@ -131,6 +133,7 @@ public class FiscalMapper {
         } else {
             fiscal.setMesa(null);
         }
+
         //fiscal.setDireccion(dir);
 
     }

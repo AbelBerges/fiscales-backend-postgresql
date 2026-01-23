@@ -18,10 +18,6 @@ public class UserDetailsServiceImplement implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario u = repo.findByNomUser(username).orElseThrow(() -> new UsernameNotFoundException("No existe el usario"));
-        return User.builder()
-                .username(u.getNomUser())
-                .password(u.getClave())
-                .roles("USER")
-                .build();
+        return new UsuarioDetails(u);
     }
 }

@@ -3,6 +3,7 @@ package org.desarrollo.dto;
 public record MesaResponseDTO(
         Integer idMesa,
         Integer numeroMesa,
-        Integer idEstablecimiento
+        Integer idEstablecimiento,
+        String nombreEstablecimiento
 ) {
 }
