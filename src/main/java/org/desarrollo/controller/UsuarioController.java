@@ -131,7 +131,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(@PathVariable int id, @RequestBody UsuarioActualizarDTO dto) {
+    public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(@PathVariable Integer id, @RequestBody UsuarioActualizarDTO dto) {
         if (dto.rol() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El rol es obligatorio");
         }
@@ -174,7 +174,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/clave/{id}")
-    public ResponseEntity<UsuarioResponseDTO> actualizarClaveUsuario(@PathVariable int id, @RequestBody UsuarioActualizarClaveDTO claveDto) {
+    public ResponseEntity<UsuarioResponseDTO> actualizarClaveUsuario(@PathVariable Integer id, @RequestBody UsuarioActualizarClaveDTO claveDto) {
         return repo.findById(id).map(existe -> {
             String hash = codificador.encode(claveDto.clave());
             existe.setClave(hash);
@@ -184,16 +184,17 @@ public class UsuarioController {
     }
 
     @PutMapping("/username/{id}")
-    public ResponseEntity<UsuarioResponseDTO> actualizarNomUserUsuario(@PathVariable int id, @RequestBody UsuarioActualizarNomUserDTO nomUserDto) {
+    public ResponseEntity<UsuarioResponseDTO> actualizarNomUserUsuario(@PathVariable Integer id, @RequestBody UsuarioActualizarNomUserDTO nomUser) {
+        System.out.println("Ver lo que viene " + id + " - " + nomUser);
         return repo.findById(id).map(existe -> {
-            existe.setNomUser(nomUserDto.nomuser());
+            existe.setNomUser(nomUser.nomUser());
             Usuario actualizo = repo.save(existe);
             return ResponseEntity.ok(UsuarioMapper.aEntidadUsuarioResponse(actualizo));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/baja/{id}")
-    public ResponseEntity<Boolean> bajaUsuario(@PathVariable int id)  throws AccessDeniedException{
+    public ResponseEntity<Boolean> bajaUsuario(@PathVariable Integer id)  throws AccessDeniedException{
         if (ContextoUsuario.esAdminGlobal()) {
             return repo.findById(id).map(existe -> {
                 existe.setActivo(false);
