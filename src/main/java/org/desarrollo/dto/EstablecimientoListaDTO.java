@@ -10,6 +10,8 @@ public record EstablecimientoListaDTO(
         String piso,
         String departamento,
         String tipoEstablecimiento,
-        Boolean activo
+        Boolean activo,
+        Integer idBasica,
+        String nombreBasica
 ) {
 }

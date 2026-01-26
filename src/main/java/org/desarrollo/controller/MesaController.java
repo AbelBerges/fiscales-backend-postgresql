@@ -2,10 +2,8 @@ package org.desarrollo.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.desarrollo.dto.AsignacionMesasRequestDTO;
-import org.desarrollo.dto.MesaEstadoDTO;
-import org.desarrollo.dto.MesaRequestDTO;
-import org.desarrollo.dto.MesaResponseDTO;
+import org.desarrollo.config.ContextoUsuario;
+import org.desarrollo.dto.*;
 import org.desarrollo.model.ErrorResponse;
 import org.desarrollo.service.MesaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,18 @@ public class MesaController {
 
     @GetMapping
     public ResponseEntity<List<MesaResponseDTO>> listarMesas() {
+        if (!ContextoUsuario.esAdminGlobal()) {
+            throw new SecurityException("No tiene permiso para acceder al listado total de mesas");
+        }
         return ResponseEntity.ok(servicio.listarMesas());
+    }
+
+    @GetMapping("/lista-tabla")
+    public ResponseEntity<List<MesaListaDTO>> listarParaTabla() {
+        if (!ContextoUsuario.esAdminGlobal()) {
+            throw new SecurityException("No tiene permisos para acceder al listado de mesas");
+        }
+        return ResponseEntity.ok(servicio.listaParaTablas());
     }
 
     @GetMapping("/{id}")

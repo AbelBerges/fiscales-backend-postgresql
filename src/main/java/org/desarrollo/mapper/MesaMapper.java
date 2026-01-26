@@ -6,11 +6,14 @@ import org.desarrollo.dto.MesaRequestDTO;
 import org.desarrollo.dto.MesaResponseDTO;
 import org.desarrollo.model.Establecimiento;
 import org.desarrollo.model.Mesa;
+import org.desarrollo.repository.MesaRepository;
+import org.desarrollo.service.MesaService;
 
 import java.util.List;
 import java.util.Objects;
 
 public class MesaMapper {
+    private static MesaRepository servicio;
 
     public static Mesa aEntidadCreacion(MesaRequestDTO dto, EntityManager em) {
         Mesa mesa = new Mesa();
@@ -23,7 +26,8 @@ public class MesaMapper {
         return new MesaResponseDTO(
                 mesa.getIdMesa(),
                 mesa.getNumeroMesa(),
-                mesa.getEstablecimiento() != null ? mesa.getEstablecimiento().getIdEstablecimiento() : null
+                mesa.getEstablecimiento() != null ? mesa.getEstablecimiento().getIdEstablecimiento() : null,
+                mesa.getEstablecimiento() != null ? mesa.getEstablecimiento().getNombreEstablecimiento() : null
         );
     }
 

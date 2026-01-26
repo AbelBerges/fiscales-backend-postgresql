@@ -3,10 +3,9 @@ package org.desarrollo.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.desarrollo.dto.AsignacionMesasRequestDTO;
-import org.desarrollo.dto.MesaEstadoDTO;
-import org.desarrollo.dto.MesaRequestDTO;
-import org.desarrollo.dto.MesaResponseDTO;
+import org.desarrollo.config.ContextoBasica;
+import org.desarrollo.config.ContextoUsuario;
+import org.desarrollo.dto.*;
 import org.desarrollo.mapper.MesaMapper;
 import org.desarrollo.model.Establecimiento;
 import org.desarrollo.model.Mesa;
@@ -36,6 +35,10 @@ public class MesaService {
                 .toList();
     }
 
+    public List<MesaListaDTO> listaParaTablas() {
+        return repoMesa.listarMesasTabla().stream().toList();
+    }
+
     public MesaResponseDTO buscarPorId(Integer id) {
         return repoMesa.findById(id)
                 .map(MesaMapper::aResponseDTO)
@@ -43,7 +46,14 @@ public class MesaService {
     }
 
     public MesaResponseDTO buscarPorNumeroMesa(Integer numeroMesa) {
-        Optional<Mesa> encontrada = repoMesa.findByNumeroMesa(numeroMesa);
+        if (ContextoUsuario.esAdminGlobal()) {
+            Optional<Mesa> encontrado = repoMesa.findByNumeroMesa(numeroMesa);
+            if (encontrado.isEmpty()) {
+                throw new EntityNotFoundException("No se encontró la mesa");
+            }
+            return MesaMapper.aResponseDTO(encontrado.get());
+        }
+        Optional<Mesa> encontrada = repoMesa.findByNumeroMesaAndBasica_IdBasica(numeroMesa, ContextoBasica.get());
         if (encontrada.isEmpty()) {
             throw new EntityNotFoundException(("No se encontró la mesa "));
         }
@@ -52,7 +62,11 @@ public class MesaService {
     }
 
     public List<MesaEstadoDTO> calcularEstado(Integer idEst) {
-        List<Object[]> crudo = repoMesa.estadoCrudoMesas(idEst);
+        if (ContextoUsuario.esAdminGlobal()) {
+            List<Object[]> crudo = repoMesa.estadoCrudoMesas(idEst);
+            return MesaMapper.aMesaDesdeObjetc(crudo);
+        }
+        List<Object[]> crudo = repoMesa.estadoCrudoMesas(idEst, ContextoBasica.get());
         return MesaMapper.aMesaDesdeObjetc(crudo);
     }
 
@@ -67,7 +81,7 @@ public class MesaService {
     }
 
     public List<MesaResponseDTO> listarSinEstablecimientos() {
-        return repoMesa.findByEstablecimiento_IdEstablecimientoIsNull()
+        return repoMesa.findByEstablecimiento_IdEstablecimientoIsNullAndBasica_IdBasica(ContextoBasica.get())
                 .stream()
                 .map(MesaMapper::aResponseDTO)
                 .toList();
@@ -88,32 +102,58 @@ public class MesaService {
     }
     @Transactional
     public void asignarMesas(Integer idEstablecimiento, List<Integer> numerosMesas) {
-        Establecimiento est = repoEst.findById(idEstablecimiento)
-                .orElseThrow(() -> new IllegalArgumentException("Establecimineto no encontrado"));
-        List<Mesa> mesas = repoMesa.findByNumeroMesaIn(numerosMesas);
-        mesas.forEach(m -> m.setEstablecimiento(est));
-        repoMesa.saveAll(mesas);
+        if (ContextoUsuario.esAdminGlobal()) {
+            Establecimiento est = repoEst.findById(idEstablecimiento).orElseThrow(() -> new IllegalArgumentException("Establecimiento no encontrado"));
+            List<Mesa> mesas = repoMesa.findByNumeroMesaIn(numerosMesas);
+            mesas.forEach(m -> m.setEstablecimiento(est));
+            repoMesa.saveAll(mesas);
+        } else {
+            Integer idBasica = ContextoBasica.get();
+            Establecimiento est = repoEst.findByIdEstablecimientoAndBasica_IdBasica(idEstablecimiento, idBasica)
+                    .orElseThrow(() -> new IllegalArgumentException("Establecimineto no encontrado"));
+            List<Mesa> mesas = repoMesa.findByNumeroMesaInAndBasica_IdBasica(numerosMesas, idBasica);
+            mesas.forEach(m -> m.setEstablecimiento(est));
+            repoMesa.saveAll(mesas);
+        }
+
     }
 
     @Transactional
     public void actualizarMesasAsignadas(Integer idEstablecimiento, List<Integer> nuevasMesas) {
-        Establecimiento establecimiento = repoEst.findById(idEstablecimiento)
-                .orElseThrow(() -> new IllegalArgumentException("Establecimiento no encontrado"));
-        // 1) Armamos la lista con las mesas asignadas actualmente
-        List<Mesa> actuales = repoMesa.findByEstablecimiento_IdEstablecimiento(idEstablecimiento);
-        // 2) Las liberamos de su asiganación
-        actuales.forEach(m-> m.setEstablecimiento(null));
-        repoMesa.saveAll(actuales);
-        // 3) Asignamos las nuevas mesas
-        if (!nuevasMesas.isEmpty()) {
-            List<Mesa> nuevas = repoMesa.findByNumeroMesaIn(nuevasMesas);
-            nuevas.forEach(m -> m.setEstablecimiento(establecimiento));
-            repoMesa.saveAll(nuevas);
+        if (ContextoUsuario.esAdminGlobal()) {
+            Establecimiento est = repoEst.findById(idEstablecimiento).orElseThrow(() -> new IllegalArgumentException("No se ha encontrado el establecimiento"));
+            //Armamos la lista con las mesas asignadas actualmente
+            List<Mesa> actuales = repoMesa.findByEstablecimiento_IdEstablecimiento(idEstablecimiento);
+            //Liberamos las mesas de su asignación actual
+            actuales.forEach(m -> m.setEstablecimiento(null));
+            //Guardamos
+            repoMesa.saveAll(actuales);
+            //Hacemos las nuevas asignaciones
+            if (!nuevasMesas.isEmpty()) {
+                List<Mesa> mesas = repoMesa.findByNumeroMesaIn(nuevasMesas);
+                mesas.forEach(m -> m.setEstablecimiento(est));
+                repoMesa.saveAll(mesas);
+            }
+        } else {
+            Integer idBasica = ContextoBasica.get();
+            Establecimiento establecimiento = repoEst.findByIdEstablecimientoAndBasica_IdBasica(idEstablecimiento, idBasica)
+                    .orElseThrow(() -> new IllegalArgumentException("Establecimiento no encontrado"));
+            // 1) Armamos la lista con las mesas asignadas actualmente
+            List<Mesa> actuales = repoMesa.findByEstablecimiento_IdEstablecimientoAndBasica_IdBasica(idEstablecimiento, ContextoBasica.get());
+            // 2) Las liberamos de su asiganación
+            actuales.forEach(m-> m.setEstablecimiento(null));
+            repoMesa.saveAll(actuales);
+            // 3) Asignamos las nuevas mesas
+            if (!nuevasMesas.isEmpty()) {
+                List<Mesa> nuevas = repoMesa.findByNumeroMesaInAndBasica_IdBasica(nuevasMesas, idBasica);
+                nuevas.forEach(m -> m.setEstablecimiento(establecimiento));
+                repoMesa.saveAll(nuevas);
+            }
         }
     }
 
     public AsignacionMesasRequestDTO mesasPorEstablecimiento(Integer id) {
-        List<Mesa> lista = repoMesa.findByEstablecimiento_IdEstablecimiento(id).stream().toList();
+        List<Mesa> lista = repoMesa.findByEstablecimiento_IdEstablecimientoAndBasica_IdBasica(id, ContextoBasica.get()).stream().toList();
         List<Integer> mesas = new ArrayList<>();
        for (int i = 0;i < lista.size();i++) {
            mesas.add(lista.get(i).getNumeroMesa());

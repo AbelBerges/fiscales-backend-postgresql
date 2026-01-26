@@ -44,6 +44,9 @@ public class Fiscal {
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "id_mesa")
     private Mesa mesa;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_basica", referencedColumnName = "id_basica", nullable = false)
+    private Basica basica;
 
 
     public Fiscal() {}
@@ -191,5 +194,21 @@ public class Fiscal {
 
     public void setMesa(Mesa mesa) {
         this.mesa = mesa;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public Basica getBasica() {
+        return basica;
+    }
+
+    public void setBasica(Basica basica) {
+        this.basica = basica;
     }
 }

@@ -12,13 +12,16 @@ public class Mesa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_mesa")
     private Integer idMesa;
-    @Column(name = "numero_mesa", nullable = false)
+    @Column(name = "numero_mesa", nullable = false, unique = true)
     private Integer numeroMesa;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_establecimiento", nullable = true)
     private Establecimiento establecimiento;
-    @OneToMany(mappedBy = "mesa", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "mesa")
     private List<Fiscal> fiscales = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_basica", referencedColumnName = "id_basica", nullable = true)
+    private Basica basica;
 
     public Mesa() {}
 
@@ -57,5 +60,13 @@ public class Mesa {
 
     public void setFiscales(List<Fiscal> fiscales) {
         this.fiscales = fiscales;
+    }
+
+    public Basica getBasica() {
+        return basica;
+    }
+
+    public void setBasica(Basica basica) {
+        this.basica = basica;
     }
 }

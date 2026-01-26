@@ -16,6 +16,8 @@ public record FiscalListaDTO(
         String piso,
         String departamento,
         Integer numeroMesa,
-        Boolean activo
+        Boolean activo,
+        Integer idBasica,
+        String nombreBasica
 ) {
 }

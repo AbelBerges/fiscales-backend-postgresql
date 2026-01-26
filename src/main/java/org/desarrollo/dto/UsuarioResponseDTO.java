@@ -7,11 +7,13 @@ public record UsuarioResponseDTO(
         String nomUser,
         String nombreUsuario,
         String apellidoUsuario,
-        String clave,
         Integer edad,
         String correo,
         String telefono,
         Boolean activo,
-        Date fechaAcceso
+        //Date fechaAcceso,
+        String rol,
+        Integer idBasica,
+        String nombreBasica
 ) {
 }

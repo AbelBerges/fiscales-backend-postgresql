@@ -26,7 +26,7 @@ public class FiscalController {
     private FiscalService servicio;
 
 
-    @GetMapping
+    @GetMapping("/listar-optimizados")
     public ResponseEntity<List<FiscalListaDTO>> listarFiscales() {
         return ResponseEntity.ok(servicio.listarFiscalesActivosOptimizado());
     }
@@ -114,28 +114,25 @@ public class FiscalController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /*@GetMapping("/opciones-buscar")
-    public ResponseEntity<List<FiscalResponseDTO>> busquedasPorFiltros(@RequestParam(required = false) Integer idTipoFiscal,
-                                                            @RequestParam(required = false) Integer idJornada,
-                                                            @RequestParam(required = false) Boolean activo,
-                                                            @RequestParam(required = false) String apellido) {
-        if (apellido == null || apellido.isBlank()) {
-            apellido = "";
-        } else {
-            apellido = apellido.toUpperCase(Locale.ROOT);
-        }
-        List<FiscalResponseDTO> resultado = servicio.busquedaParaFiltros(idTipoFiscal, idJornada, activo, apellido);
-        return ResponseEntity.ok(resultado);
-    }*/
-
     @PostMapping
     public ResponseEntity<FiscalResponseDTO> guardarFiscal(@RequestBody FiscalRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(servicio.guardarFiscal(dto));
     }
 
+    @PostMapping("/guardar-admin/{idBasica}")
+    public ResponseEntity<FiscalResponseDTO> guardarAdmin(@RequestBody FiscalRequestDTO dto, Integer idBasica) {
+        return ResponseEntity.ok(servicio.guardarFiscalComoAdmin(dto, idBasica));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> actualizarFiscal(@PathVariable Integer id, @RequestBody FiscalRequestDTO dto) {
         servicio.actualizarFiscal(id, dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{idFiscal}/cambiar-basica/{idBasica}")
+    public ResponseEntity<Void> cambiarFiscalBasica(@PathVariable Integer idFiscal, @PathVariable Integer idBasica) {
+        servicio.cambiarBasica(idFiscal, idBasica);
         return ResponseEntity.ok().build();
     }
 
