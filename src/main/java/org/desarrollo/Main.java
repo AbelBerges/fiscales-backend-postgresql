@@ -13,6 +13,6 @@ public class Main {
         //String hash = "$2a$10$Dow1fSJhgxqFwSgusIsy0u1BUpfk0u6El3arhCY3yc5T4HBP71l1C"; // el de tu DB
 
         //System.out.println(new BCryptPasswordEncoder().matches(raw, hash));
-        //System.out.println(new BCryptPasswordEncoder().encode("1234"));
+        //System.out.println(new BCryptPasswordEncoder().encode("M1234"));
     }
 }
