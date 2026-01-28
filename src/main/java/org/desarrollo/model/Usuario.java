@@ -2,14 +2,12 @@ package org.desarrollo.model;
 
 import jakarta.persistence.*;
 import org.desarrollo.enumeradores.Rol;
-
-import java.awt.*;
 import java.util.Date;
 
 @Table(name = "usuario",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"nom_user"}),
-        @UniqueConstraint(columnNames = {"coreo"}),
+        @UniqueConstraint(columnNames = {"correo"}),
         @UniqueConstraint(columnNames = {"telefono"})
     })
 @Entity(name = "Usuario")

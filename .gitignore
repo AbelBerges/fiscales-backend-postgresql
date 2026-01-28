@@ -40,3 +40,4 @@ build/
 
 /src/main/resources/application.properties
 /src/main/resources/application.properties.LOCAL
+/src/main/resources/application.properties.FLY
